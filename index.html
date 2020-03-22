@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>五子棋</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="tip">
+        <span v-if="!isGameOver">
+          当前出手：{{isIplay ? '黑方' : '白方'}}
+        </span>
+        <span class="tip-win" v-else>
+          {{isIplay ? '白方' : '黑方'}} 胜利
+        </span>
+      </div>
+
+      <transition name="fade">
+        <div v-show="isCanvasRender" class="container">
+          <canvas ref="canvasBoard" width="600" height="600"></canvas>
+          <canvas
+            ref="canvasItem"
+            class="canvas-chess"
+            width="600"
+            height="600"
+            @click="handleChess"
+          ></canvas>
+        </div>
+      </transition>
+
+      <transition name="fade">
+        <div v-show="!isCanvasRender" class="container">
+          <div class="dom-layout">
+            <template v-for="(row, x) in rows">
+              <template v-for="(col, y) in rows">
+                <i
+                  :class="chessMap[_format(x, y)]"
+                  @click="handleChess($event, x, y)"
+                >
+                </i>
+                <br v-if="col === rows" />
+              </template>
+            </template>
+          </div>
+        </div>
+      </transition>
+
+      <div class="btn-group">
+        <button @click="reset">重新开始</button>
+        <button
+          :class="isChessState && !isGameOver ? '' : 'disabled'"
+          :disabled="!isChessState || isGameOver"
+          @click="regretChess"
+        >
+          悔棋
+        </button>
+        <button
+          :class="isUndoChessState && !isGameOver ? '' : 'disabled'"
+          :disabled="!isUndoChessState || isGameOver"
+          @click="undoRegretChess"
+        >
+          撤销悔棋
+        </button>
+        <button @click="switchRender">
+          切换为 {{isCanvasRender ? 'DOM' : 'Canvas'}} 渲染
+        </button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
